@@ -11,7 +11,7 @@ GameObject::GameObject( Ogre::SceneManager* SceneMgr,Ogre::Node* node, string na
 
 void GameObject::Update(const Ogre::FrameEvent& evt)
 {
-	float speed = 100.0f;
+	float speed = 920.0f;
 	objectNode->translate(Ogre::Vector3(0,evt.timeSinceLastFrame*speed,0));
 }
 

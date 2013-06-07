@@ -1,5 +1,5 @@
 #include "Projectile.h"
-Projectile::Projectile(void)
+void Projectile::Update( const Ogre::FrameEvent& )
 {
-
+	throw std::exception("The method or operation is not implemented.");
 }

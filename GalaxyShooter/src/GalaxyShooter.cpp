@@ -3,19 +3,16 @@
 #include <string>
 #include <cmath>
 
-
 using namespace std;
 
 //-------------------------------------------------------------------------------------
 GalaxyShooter::GalaxyShooter(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------
 GalaxyShooter::~GalaxyShooter(void)
 {
-
 }
 
 //-------------------------------------------------------------------------------------
@@ -58,7 +55,17 @@ void GalaxyShooter::createScene(void)
 	nodeShip->attachObject(ent);
 	nodeShip->scale(Ogre::Vector3(15,15,15));
 
+	Ogre::MaterialPtr mat = Ogre::MaterialManager::getSingleton().create("shipmatt", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	Ogre::TextureUnitState* shipture = mat->getTechnique(0)->getPass(0)->createTextureUnitState("SimpleShip.tga");
+	ent->setMaterial(mat);
+
 	Ogre::SceneNode *nodeOrigins = mSceneMgr->getRootSceneNode()->createChildSceneNode("Origins");
+
+
+
+	Ogre::MaterialPtr astmat = Ogre::MaterialManager::getSingleton().create("astroidMatt", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	Ogre::TextureUnitState* asture = astmat->getTechnique(0)->getPass(0)->createTextureUnitState("Asteroid.tga");
+
 
 	// create the light
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
@@ -207,10 +214,8 @@ bool GalaxyShooter::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonI
 
 void GalaxyShooter::Shoot()
 {
-	
 	//Get Current Position of SpaceCraft;
 	Ogre::Vector3 pos = mSceneMgr->getSceneNode("SpacecraftNode")->getChild("Ship")->getPosition();
-
 
 	static int counter = 0;
 	counter++;
@@ -221,12 +226,16 @@ void GalaxyShooter::Shoot()
 	Ogre::Entity *ent = mSceneMgr->createEntity(itemName.str(), "ast.mesh");
 	Ogre::SceneNode *node =	mSceneMgr->getSceneNode("Origins")->createChildSceneNode(itemName.str());
 	node->attachObject(ent);
-	node->setPosition(pos + Ogre::Vector3(0,10,0));
+	node->setPosition(pos + Ogre::Vector3(0,15,0));
+	node->setScale(Ogre::Vector3(.7f,.7f,.7f));
+
+	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("astroidMatt");
+	ent->setMaterial(material);
+
 
 	GameObject newobject(mSceneMgr, node, itemName.str());
-	
-	sceneObjects.push_back(newobject);
 
+	sceneObjects.push_back(newobject);
 }
 
 void GalaxyShooter::UpdateGameObjects(const Ogre::FrameEvent& evt)
