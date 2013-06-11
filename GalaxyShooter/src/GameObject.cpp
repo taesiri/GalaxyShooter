@@ -2,20 +2,17 @@
 
 int GameObject::instances = 0;
 
-GameObject::GameObject( Ogre::SceneManager* SceneMgr,Ogre::Node* node, string name )
+GameObject::GameObject(Ogre::SceneManager* SceneMgr,Ogre::Node* node, Ogre::Entity* entity )
 {
-	ObjectName = name;
+	objectEntity = entity;
 	localSceneManager = SceneMgr;
 	objectNode = node;
 }
 
 void GameObject::Update(const Ogre::FrameEvent& evt)
 {
-	float speed = 920.0f;
-	objectNode->translate(Ogre::Vector3(0,evt.timeSinceLastFrame*speed,0));
 }
 
-void GameObject::test()
+void GameObject::Translate( Ogre::Vector3 translateVector)
 {
-
 }

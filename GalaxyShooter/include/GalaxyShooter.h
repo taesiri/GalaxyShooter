@@ -8,6 +8,7 @@
 
 #include <vector>
 #include "GameObject.h"
+#include "SpaceCraft.h"
 
 class GalaxyShooter : public BaseApplication
 {
@@ -20,14 +21,10 @@ private:
 	static const int ORTHOGRAPHIC_SIZE = 850;
 	static const int NEAR_CLIP_DISTANCE = 10;
 
-	
 	public:
-	void Shoot(void);
 	void UpdateGameObjects(const Ogre::FrameEvent&);
-
-
-	vector<GameObject> sceneObjects;
-
+	vector<GameObject*> sceneObjects;
+	static vector<GameObject*> NEWsceneObjects;
 protected:
 
 	virtual void createScene(void);
@@ -45,14 +42,10 @@ protected:
 	virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 
-	Ogre::Real mRotate;          // The rotate constant
-	Ogre::Real mMove;            // The movement constant
-
 	Ogre::SceneNode *mCamNode;   // The SceneNode the camera is currently attached to
-
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
-
-	Ogre::Vector3 transVector;
+	
+	//friend class GameObject;
 };
 
 #endif // #ifndef __GalaxyShooter_h_

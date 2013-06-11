@@ -27,6 +27,9 @@
     <ClInclude Include="include\GameObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\SpaceCraft.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\Projectile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -39,6 +42,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SpaceCraft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Projectile.cpp">

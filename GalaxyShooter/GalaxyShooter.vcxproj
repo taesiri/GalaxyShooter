@@ -118,6 +118,7 @@
     <ClInclude Include="include\GalaxyShooter.h" />
     <ClInclude Include="include\GameObject.h" />
     <ClInclude Include="include\Projectile.h" />
+    <ClInclude Include="include\SpaceCraft.h" />
     <ClInclude Include="res\Resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -125,6 +126,7 @@
     <ClCompile Include="src\GalaxyShooter.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
+    <ClCompile Include="src\SpaceCraft.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\ReadMe.txt" />
