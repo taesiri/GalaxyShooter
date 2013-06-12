@@ -122,6 +122,7 @@
     <ClInclude Include="include\Projectile.h" />
     <ClInclude Include="include\SpaceCraft.h" />
     <ClInclude Include="res\Resource.h" />
+    <ClInclude Include="include\Starfield.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\DebugDrawer.cpp" />
@@ -131,6 +132,7 @@
     <ClCompile Include="src\GameObject.cpp" />
     <ClCompile Include="src\Projectile.cpp" />
     <ClCompile Include="src\SpaceCraft.cpp" />
+    <ClCompile Include="src\Starfield.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="docs\ReadMe.txt" />

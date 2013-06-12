@@ -10,6 +10,7 @@
 #include "GameObject.h"
 #include "SpaceCraft.h"
 #include "Enemy.h"
+#include "Starfield.h"
 
 class GalaxyShooter : public BaseApplication
 {
@@ -21,6 +22,7 @@ private:
 	// Game Private Static Constants;
 	static const int ORTHOGRAPHIC_SIZE = 850;
 	static const int NEAR_CLIP_DISTANCE = 10;
+	static int score;
 
 public:
 	//Public Methods
@@ -28,12 +30,12 @@ public:
 	void UpdateGameObjects(const Ogre::FrameEvent&);
 	vector<GameObject*> sceneObjects;
 
-
 	static vector<GameObject*> NEWsceneObjects;
 	static vector<GameObject*> deleteList;
 
 	void CheckCollisions();
 
+	OgreBites::Label* scoreBoardLabel;
 
 protected:
 
@@ -59,7 +61,7 @@ protected:
 
 	Ogre::SceneNode *mCamNode;   // The SceneNode the camera is currently attached to
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
-	
+
 	//friend class GameObject;
 };
 

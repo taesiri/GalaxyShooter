@@ -6,11 +6,12 @@
 
 #include "DebugDrawer.h"
 
+
 using namespace std;
 
 vector<GameObject*> GalaxyShooter::NEWsceneObjects;
 vector<GameObject*> GalaxyShooter::deleteList;
-
+int GalaxyShooter::score = 0 ;
 //-------------------------------------------------------------------------------------
 GalaxyShooter::GalaxyShooter(void)
 {
@@ -54,6 +55,8 @@ void GalaxyShooter::createViewports(void)
 void GalaxyShooter::createScene(void)
 {
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
+	mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8);
+
 
 	// Spacecraft
 	Ogre::Entity *spaceCraftEntity = mSceneMgr->createEntity("Spacecraft", "Spacecraft.mesh");
@@ -91,28 +94,53 @@ void GalaxyShooter::createScene(void)
 	// Background
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
 	Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Y);
+		plane, 2000, 2000, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Y);
 
 	/*Ogre::MeshManager::getSingleton().createPlane("",Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane,,,,,,*/
-	Ogre::Entity* backgroundEntity = mSceneMgr->createEntity("BackGround", "ground");
-	Ogre::SceneNode *nodePlane= mSceneMgr->getSceneNode("EnvironmentNode")->createChildSceneNode("BackgroundStarsNode");
-	nodePlane->attachObject(backgroundEntity);
-	backgroundEntity->setMaterialName("StarsLarge");
-	backgroundEntity->setCastShadows(false);
-	nodePlane->translate(Ogre::Vector3(0,0,-200));
 
-	//GameObject* background = new GameObject(mSceneMgr,nodePlane, backgroundEntity);
-	//sceneObjects.push_back(background);
+	Ogre::Entity* backgroundEntity1 = mSceneMgr->createEntity("BackGround1", "ground");
+	Ogre::Entity* backgroundEntity2 = mSceneMgr->createEntity("BackGround2", "ground");
+
+	Ogre::SceneNode *nodePlane1 = mSceneMgr->getSceneNode("EnvironmentNode")->createChildSceneNode("BackgroundStars1Node");
+	Ogre::SceneNode *nodePlane2 = mSceneMgr->getSceneNode("EnvironmentNode")->createChildSceneNode("BackgroundStars2Node");
+
+	nodePlane1->attachObject(backgroundEntity1);
+	nodePlane2->attachObject(backgroundEntity2);
+
+	backgroundEntity1->setMaterialName("StarsLarge");
+	backgroundEntity1->setCastShadows(false);
+
+	backgroundEntity2->setMaterialName("StarsSmall");
+	backgroundEntity2->setCastShadows(false);
+
+	nodePlane1->translate(Ogre::Vector3(0,0,-200));
+	nodePlane2->translate(Ogre::Vector3(0,2000,-198));
+
+	Starfield* fieldOfStars1 = new Starfield(mSceneMgr,nodePlane1, backgroundEntity1);
+	Starfield* fieldOfStars2 = new Starfield(mSceneMgr,nodePlane2, backgroundEntity2);
+
+	sceneObjects.push_back(fieldOfStars1);
+	sceneObjects.push_back(fieldOfStars2);
 
 	// Background
+
+
+	// Smoke
+	Ogre::ParticleSystem* pSys2 = mSceneMgr->createParticleSystem("fountain1", "Examples/SpaceCraftParticle");
+	Ogre::SceneNode* fNode = nodeShip->createChildSceneNode();
+	fNode->attachObject(pSys2);
+	fNode->translate(Ogre::Vector3(0, -4.9f,0));
 
 	// Lights
 	Ogre::Light *light = mSceneMgr->createLight("Light1");
 	light->setType(Ogre::Light::LT_POINT);
-	light->setPosition(Ogre::Vector3(0, 150, 250));
+	light->setPosition(Ogre::Vector3(0, 0, 250));
 	light->setDiffuseColour(Ogre::ColourValue::White);
-	light->setSpecularColour(Ogre::ColourValue::White);
+	light->setSpecularColour(Ogre::ColourValue::Red);
 	// Lights
+
+
+	
 
 	// Initialize the DebugDrawer singleton
 	new DebugDrawer(mSceneMgr, 0.5f);
@@ -131,6 +159,11 @@ void GalaxyShooter::createFrameListener(void)
 	// Populate the camera container
 	mCamNode = mCamera->getParentSceneNode();
 	mDirection = Ogre::Vector3::ZERO;
+
+	stringstream scoreString;
+	scoreString << "Score : " << score;
+
+	scoreBoardLabel = mTrayMgr->createLabel(OgreBites::TL_BOTTOMLEFT, "ScoreBoard", Ogre::DisplayString(scoreString.str()), 250.0f);
 }
 
 bool GalaxyShooter::frameStarted( const Ogre::FrameEvent& evt )
@@ -280,6 +313,10 @@ bool GalaxyShooter::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonI
 
 void GalaxyShooter::UpdateGameObjects(const Ogre::FrameEvent& evt)
 {
+	stringstream scoreString;
+	scoreString << "Score : " << score;
+
+	scoreBoardLabel->setCaption(scoreString.str());
 	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		(*i)->Update(evt);
@@ -329,7 +366,17 @@ void GalaxyShooter::RespawnEnemy()
 
 void GalaxyShooter::CheckCollisions()
 {
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+	for (int i = 0; i< sceneObjects.size(); i++)
+	{
+		for (int j = i + 1; j < sceneObjects.size(); j++)
+		{
+			if ( sceneObjects[i]->IsCollided(sceneObjects[j]))
+			{
+			}
+		}
+	}
+
+	/*for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		for (vector<GameObject*>::iterator j = sceneObjects.begin(); j != sceneObjects.end(); j++)
 		{
@@ -339,7 +386,7 @@ void GalaxyShooter::CheckCollisions()
 			{
 			}
 		}
-	}
+	}*/
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

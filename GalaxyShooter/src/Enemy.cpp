@@ -54,8 +54,22 @@ void Enemy::mouseMoved( const OIS::MouseEvent &arg)
 
 void Enemy::Collided( GameObject* otherObject )
 {
+	static int counter = 0;
+	counter++;
+
 	if (dynamic_cast<Projectile*> (otherObject)!= NULL )
 	{
+
+		stringstream itemName;
+		itemName << "explosion-" << counter;
+
+		/*Ogre::ParticleSystem* explosionParticle = localSceneManager->createParticleSystem(itemName.str(), "Explosion");
+		Ogre::SceneNode *explosionNode =localSceneManager->getSceneNode("EnemiesNode")->createChildSceneNode(itemName.str());
+		explosionNode->attachObject(explosionParticle);
+		explosionNode->setPosition(objectNode->getPosition());*/
+	
+		//explosionParticle->setEmitting(false);
+
 		Destroy();
 		otherObject->Destroy();
 	}
