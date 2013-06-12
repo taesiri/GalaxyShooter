@@ -114,6 +114,8 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\DebugDrawer.h" />
+    <ClInclude Include="include\Enemy.h" />
     <ClInclude Include="include\BaseApplication.h" />
     <ClInclude Include="include\GalaxyShooter.h" />
     <ClInclude Include="include\GameObject.h" />
@@ -122,6 +124,8 @@
     <ClInclude Include="res\Resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\DebugDrawer.cpp" />
+    <ClCompile Include="src\Enemy.cpp" />
     <ClCompile Include="src\BaseApplication.cpp" />
     <ClCompile Include="src\GalaxyShooter.cpp" />
     <ClCompile Include="src\GameObject.cpp" />
