@@ -1,0 +1,30 @@
+particle_system Examples/SpaceCraftParticle
+{
+	material 		Examples/Flare
+	particle_width 	25
+	particle_height	25
+	cull_each		false
+	quota			200
+	billboard_type	point
+
+	emitter Point
+	{
+		angle 3
+		emission_rate 110
+        time_to_live    0.6
+        direction       0 -1 0
+        velocity_min    150
+        velocity_max    350
+        colour_range_start  0.5 1 1
+        colour_range_end    0.3 0.8 1
+		
+	}
+	affector ColourFader
+	{
+		red -1
+		green -1
+		blue -0.5
+	}
+	
+	
+}
