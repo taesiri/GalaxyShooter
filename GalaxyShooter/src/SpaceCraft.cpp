@@ -18,7 +18,7 @@ void SpaceCraft::Update( const Ogre::FrameEvent& evt)
 	Ogre::Vector3 vec = objectNode->getPosition();
 	Ogre::Vector3 translation = transVector * evt.timeSinceLastFrame;
 
-	if(abs(vec.x + translation.x) < 510)
+	if((vec.x + translation.x < 550) &&(vec.x + translation.x > -550) && (vec.y + translation.y < 390)&&(vec.y + translation.y > -365))
 	{
 		objectNode->translate(translation, Ogre::Node::TS_LOCAL);
 	}
@@ -125,7 +125,7 @@ void SpaceCraft::Shoot()
 	Ogre::Vector3 pos = objectNode->getPosition();  //localSceneManager->getSceneNode("SpacecraftNode")->getChild("Ship")->getPosition();
 
 	Ogre::Entity *projectileEntity = localSceneManager->createEntity(itemName.str(), "ast.mesh");
-	Ogre::SceneNode *projectileNode =	localSceneManager->getSceneNode("Projectiles")->createChildSceneNode(itemName.str());
+	Ogre::SceneNode *projectileNode =	localSceneManager->getSceneNode("ProjectilesNode")->createChildSceneNode(itemName.str());
 	projectileNode->attachObject(projectileEntity);
 	projectileNode->setPosition(pos + Ogre::Vector3(0,16,11));
 	projectileNode->setScale(Ogre::Vector3(.7f,.7f,.7f));

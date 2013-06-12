@@ -11,14 +11,17 @@ Projectile::~Projectile( void )
 
 }
 
-void Projectile::Update( const Ogre::FrameEvent&arg )
+void Projectile::Update( const Ogre::FrameEvent& evt )
 {
-	objectNode->translate(speed*transVector * arg.timeSinceLastFrame);
+	objectNode->translate(speed*transVector * evt.timeSinceLastFrame);
+
+	if (objectNode->getPosition().y > 510)
+		Destroy();
 }
 
 void Projectile::Destroy()
 {
-	
+	GalaxyShooter::deleteList.push_back(this);
 }
 
 void Projectile::keyPressed( const OIS::KeyEvent &arg )
@@ -44,6 +47,15 @@ void Projectile::mouseReleased( const OIS::MouseEvent&arg, OIS::MouseButtonID id
 void Projectile::mouseMoved( const OIS::MouseEvent &arg )
 {
 	
+}
+
+void Projectile::Collided( GameObject* otherObject)
+{
+	if (dynamic_cast<Enemy*> (otherObject)!= NULL )
+	{
+		Destroy();
+		otherObject->Destroy();
+	}
 }
 
 

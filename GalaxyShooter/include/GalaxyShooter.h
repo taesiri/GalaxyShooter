@@ -9,6 +9,7 @@
 #include <vector>
 #include "GameObject.h"
 #include "SpaceCraft.h"
+#include "Enemy.h"
 
 class GalaxyShooter : public BaseApplication
 {
@@ -21,19 +22,33 @@ private:
 	static const int ORTHOGRAPHIC_SIZE = 850;
 	static const int NEAR_CLIP_DISTANCE = 10;
 
-	public:
+public:
+	//Public Methods
+	void RespawnEnemy();
 	void UpdateGameObjects(const Ogre::FrameEvent&);
 	vector<GameObject*> sceneObjects;
+
+
 	static vector<GameObject*> NEWsceneObjects;
+	static vector<GameObject*> deleteList;
+
+	void CheckCollisions();
+
+
 protected:
 
 	virtual void createScene(void);
+	virtual void destroyScene(void);
 	virtual void createCamera(void);
 	virtual void createViewports(void);
 	virtual void createFrameListener(void);
 
 	// Ogre::FrameListener
 	virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+
+	virtual bool frameStarted(const Ogre::FrameEvent& evt);
+	virtual bool frameEnded(const Ogre::FrameEvent& evt);
+
 	// OIS::KeyListener
 	virtual bool keyPressed( const OIS::KeyEvent &arg );
 	virtual bool keyReleased( const OIS::KeyEvent &arg );

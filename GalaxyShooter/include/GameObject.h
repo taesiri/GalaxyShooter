@@ -28,12 +28,18 @@ public:
 
 	// Virtual Methods
 	virtual void Translate(Ogre::Vector3);
+	virtual ~GameObject();
+	virtual Ogre::Vector3* getGlobalBoundaries();
 
-protected:
+	virtual void Collided(GameObject*);
+	virtual bool IsCollided (GameObject*);
+
+public:
 	Ogre::SceneManager* localSceneManager;
 	Ogre::Entity* objectEntity;
 	Ogre::Node* objectNode;
 
 	static int instances;
 private:
+	
 };
