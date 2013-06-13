@@ -8,12 +8,15 @@ GameObject::GameObject(Ogre::SceneManager* SceneMgr,Ogre::Node* node, Ogre::Enti
 	localSceneManager = SceneMgr;
 	objectNode = node;
 	instances++;
+	isPhysicsEnabled = true;
 }
 
 GameObject::~GameObject()
 {
 	instances--;
-	localSceneManager->destroyEntity(objectEntity);
+	if ( objectEntity != NULL){
+		localSceneManager->destroyEntity(objectEntity);
+	}
 }
 
 void GameObject::Update(const Ogre::FrameEvent& evt)
@@ -44,18 +47,21 @@ Ogre::Vector3* GameObject::getGlobalBoundaries()
 
 bool GameObject::IsCollided(GameObject* otherObject)
 {
-	Ogre::Vector3* otherObjectCordinates = otherObject->getGlobalBoundaries();
-
-	// 4 Points Only
-	Ogre::Vector3* baseObjectCordinates = getGlobalBoundaries();
-
-	for (int i = 0 ; i < 4; i++)
+	if (this->isPhysicsEnabled && otherObject->isPhysicsEnabled)
 	{
-		if((otherObjectCordinates[i].x > baseObjectCordinates[0].x) &&  (otherObjectCordinates[i].x < baseObjectCordinates[1].x)
-			&&(otherObjectCordinates[i].y >  baseObjectCordinates[0].y) &&  (otherObjectCordinates[i].y < baseObjectCordinates[3].y))
+		Ogre::Vector3* otherObjectCordinates = otherObject->getGlobalBoundaries();
+
+		// 4 Points Only
+		Ogre::Vector3* baseObjectCordinates = getGlobalBoundaries();
+
+		for (int i = 0 ; i < 4; i++)
 		{
-			Collided(otherObject);
-			return true;
+			if((otherObjectCordinates[i].x > baseObjectCordinates[0].x) &&  (otherObjectCordinates[i].x < baseObjectCordinates[1].x)
+				&&(otherObjectCordinates[i].y >  baseObjectCordinates[0].y) &&  (otherObjectCordinates[i].y < baseObjectCordinates[3].y))
+			{
+				Collided(otherObject);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -63,5 +69,28 @@ bool GameObject::IsCollided(GameObject* otherObject)
 
 void GameObject::Collided(GameObject* otherEntity)
 {
+}
 
+void GameObject::Destroy()
+{
+}
+
+void GameObject::keyPressed( const OIS::KeyEvent & )
+{
+}
+
+void GameObject::keyReleased( const OIS::KeyEvent & )
+{
+}
+
+void GameObject::mousePressed( const OIS::MouseEvent&, OIS::MouseButtonID )
+{
+}
+
+void GameObject::mouseReleased( const OIS::MouseEvent&, OIS::MouseButtonID )
+{
+}
+
+void GameObject::mouseMoved( const OIS::MouseEvent & )
+{
 }

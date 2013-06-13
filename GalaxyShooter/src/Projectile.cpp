@@ -24,31 +24,6 @@ void Projectile::Destroy()
 	GalaxyShooter::deleteList.push_back(this);
 }
 
-void Projectile::keyPressed( const OIS::KeyEvent &arg )
-{
-	
-}
-
-void Projectile::keyReleased( const OIS::KeyEvent &arg )
-{
-	
-}
-
-void Projectile::mousePressed( const OIS::MouseEvent&arg, OIS::MouseButtonID id)
-{
-	
-}
-
-void Projectile::mouseReleased( const OIS::MouseEvent&arg, OIS::MouseButtonID id )
-{
-	
-}
-
-void Projectile::mouseMoved( const OIS::MouseEvent &arg )
-{
-	
-}
-
 void Projectile::Collided( GameObject* otherObject)
 {
 	if (dynamic_cast<Enemy*> (otherObject)!= NULL )
@@ -57,5 +32,3 @@ void Projectile::Collided( GameObject* otherObject)
 		otherObject->Destroy();
 	}
 }
-
-

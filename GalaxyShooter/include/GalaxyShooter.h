@@ -11,6 +11,7 @@
 #include "SpaceCraft.h"
 #include "Enemy.h"
 #include "Starfield.h"
+#include "ParticleController.h"
 
 class GalaxyShooter : public BaseApplication
 {
@@ -22,20 +23,26 @@ private:
 	// Game Private Static Constants;
 	static const int ORTHOGRAPHIC_SIZE = 850;
 	static const int NEAR_CLIP_DISTANCE = 10;
-	static int score;
+	
 
 public:
 	//Public Methods
-	void RespawnEnemy();
+
 	void UpdateGameObjects(const Ogre::FrameEvent&);
+	void UpdateStats(const Ogre::FrameEvent&);
+	void CheckCollisions();
+
+	void RespawnEnemy();
+
 	vector<GameObject*> sceneObjects;
 
 	static vector<GameObject*> NEWsceneObjects;
 	static vector<GameObject*> deleteList;
 
-	void CheckCollisions();
+	static int score;
+	static int lives;
 
-	OgreBites::Label* scoreBoardLabel;
+	static void ReduceLife();
 
 protected:
 
@@ -62,7 +69,9 @@ protected:
 	Ogre::SceneNode *mCamNode;   // The SceneNode the camera is currently attached to
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
 
-	//friend class GameObject;
+	OgreBites::Label* scoreBoardLabel; // Scoreboard
+	OgreBites::Label* livesBoard; // Player Lives board
+
 };
 
 #endif // #ifndef __GalaxyShooter_h_

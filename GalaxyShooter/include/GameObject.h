@@ -18,13 +18,13 @@ public:
 	GameObject(Ogre::SceneManager*,Ogre::Node*,Ogre::Entity*);
 
 	// Pure virtual Methods
-	virtual void Update(const Ogre::FrameEvent&) = 0;
-	virtual void Destroy()= 0;
-	virtual void keyPressed(const OIS::KeyEvent &) = 0;
-	virtual void keyReleased(const OIS::KeyEvent &) = 0;
-	virtual void mousePressed(const OIS::MouseEvent&, OIS::MouseButtonID) = 0;
-	virtual void mouseReleased(const OIS::MouseEvent&, OIS::MouseButtonID) = 0;
-	virtual void mouseMoved(const OIS::MouseEvent &) = 0;
+	virtual void Update(const Ogre::FrameEvent&);
+	virtual void Destroy();
+	virtual void keyPressed(const OIS::KeyEvent &);
+	virtual void keyReleased(const OIS::KeyEvent &);
+	virtual void mousePressed(const OIS::MouseEvent&, OIS::MouseButtonID);
+	virtual void mouseReleased(const OIS::MouseEvent&, OIS::MouseButtonID);
+	virtual void mouseMoved(const OIS::MouseEvent &);
 
 	// Virtual Methods
 	virtual void Translate(Ogre::Vector3);
@@ -38,6 +38,7 @@ public:
 	Ogre::SceneManager* localSceneManager;
 	Ogre::Entity* objectEntity;
 	Ogre::Node* objectNode;
+	bool isPhysicsEnabled;
 
 	static int instances;
 private:

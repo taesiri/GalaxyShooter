@@ -4,6 +4,7 @@ Starfield::Starfield(Ogre::SceneManager* SceneMgr,Ogre::Node* node, Ogre::Entity
 {
 	transVector = Ogre::Vector3(0,-1,0);
 	speed = 90;
+	isPhysicsEnabled = false;
 }
 
 Starfield::~Starfield(void)
@@ -29,25 +30,5 @@ void Starfield::Update( const Ogre::FrameEvent& evt)
 }
 
 void Starfield::Destroy()
-{
-}
-
-void Starfield::keyPressed( const OIS::KeyEvent & )
-{
-}
-
-void Starfield::keyReleased( const OIS::KeyEvent & )
-{
-}
-
-void Starfield::mousePressed( const OIS::MouseEvent&, OIS::MouseButtonID )
-{
-}
-
-void Starfield::mouseReleased( const OIS::MouseEvent&, OIS::MouseButtonID )
-{
-}
-
-void Starfield::mouseMoved( const OIS::MouseEvent & )
 {
 }

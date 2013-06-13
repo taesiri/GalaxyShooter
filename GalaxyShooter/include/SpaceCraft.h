@@ -2,6 +2,8 @@
 #include "GalaxyShooter.h"
 #include "GameObject.h"
 #include "Projectile.h"
+#include "Enemy.h"
+#include "ParticleController.h"
 
 
 class SpaceCraft : public GameObject
@@ -20,6 +22,9 @@ public:
 	virtual void mousePressed( const OIS::MouseEvent&, OIS::MouseButtonID );
 	virtual void mouseReleased( const OIS::MouseEvent&, OIS::MouseButtonID );
 	virtual void mouseMoved(const OIS::MouseEvent & );
+
+	virtual void Collided( GameObject* );
+
 
 private:
 	Ogre::Vector3 transVector;

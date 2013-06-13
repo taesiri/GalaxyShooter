@@ -27,31 +27,6 @@ void Enemy::Destroy()
 	GalaxyShooter::deleteList.push_back(this);
 }
 
-void Enemy::keyPressed( const OIS::KeyEvent &arg)
-{
-
-}
-
-void Enemy::keyReleased( const OIS::KeyEvent &arg)
-{
-
-}
-
-void Enemy::mousePressed( const OIS::MouseEvent&arg, OIS::MouseButtonID id)
-{
-
-}
-
-void Enemy::mouseReleased( const OIS::MouseEvent&arg, OIS::MouseButtonID id)
-{
-	
-}
-
-void Enemy::mouseMoved( const OIS::MouseEvent &arg)
-{
-
-}
-
 void Enemy::Collided( GameObject* otherObject )
 {
 	static int counter = 0;
@@ -63,14 +38,21 @@ void Enemy::Collided( GameObject* otherObject )
 		stringstream itemName;
 		itemName << "explosion-" << counter;
 
-		/*Ogre::ParticleSystem* explosionParticle = localSceneManager->createParticleSystem(itemName.str(), "Explosion");
+		Ogre::ParticleSystem* explosionParticle = localSceneManager->createParticleSystem(itemName.str(), "Explosion");
 		Ogre::SceneNode *explosionNode =localSceneManager->getSceneNode("EnemiesNode")->createChildSceneNode(itemName.str());
 		explosionNode->attachObject(explosionParticle);
-		explosionNode->setPosition(objectNode->getPosition());*/
-	
-		//explosionParticle->setEmitting(false);
+		explosionNode->setPosition(objectNode->getPosition());
+
+		ParticleController* particleCtler = new ParticleController(explosionParticle,1,localSceneManager,explosionNode, NULL);
+		GalaxyShooter::NEWsceneObjects.push_back(particleCtler);
+
+		GalaxyShooter::score+=10;
 
 		Destroy();
 		otherObject->Destroy();
+	}
+	else if (dynamic_cast<SpaceCraft*> (otherObject)!= NULL )
+	{
+		GalaxyShooter::ReduceLife();
 	}
 }

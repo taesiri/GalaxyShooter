@@ -11,7 +11,9 @@ using namespace std;
 
 vector<GameObject*> GalaxyShooter::NEWsceneObjects;
 vector<GameObject*> GalaxyShooter::deleteList;
-int GalaxyShooter::score = 0 ;
+
+int GalaxyShooter::score = 0;
+int GalaxyShooter::lives = 3;
 //-------------------------------------------------------------------------------------
 GalaxyShooter::GalaxyShooter(void)
 {
@@ -84,6 +86,9 @@ void GalaxyShooter::createScene(void)
 	Ogre::MaterialPtr astmat = Ogre::MaterialManager::getSingleton().create("astroidMatt", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	Ogre::TextureUnitState* asture = astmat->getTechnique(0)->getPass(0)->createTextureUnitState("Asteroid.tga");
 
+	Ogre::MaterialPtr prjMat = Ogre::MaterialManager::getSingleton().create("projectileMatt", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
+	Ogre::TextureUnitState* Prjture = prjMat->getTechnique(0)->getPass(0)->createTextureUnitState("Plasma02.jpg");
+
 	Ogre::MaterialPtr BackgrounMattSmall = Ogre::MaterialManager::getSingleton().create("StarsSmall", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
 	Ogre::TextureUnitState* BackgrounMattSmallTexture = BackgrounMattSmall->getTechnique(0)->getPass(0)->createTextureUnitState("Stars.png");
 
@@ -124,23 +129,28 @@ void GalaxyShooter::createScene(void)
 
 	// Background
 
-
-	// Smoke
-	Ogre::ParticleSystem* pSys2 = mSceneMgr->createParticleSystem("fountain1", "Examples/SpaceCraftParticle");
+	// JetEngine Particle
+	Ogre::ParticleSystem* pSys2 = mSceneMgr->createParticleSystem("jetEngineParticle", "Examples/SpaceCraftParticle");
 	Ogre::SceneNode* fNode = nodeShip->createChildSceneNode();
 	fNode->attachObject(pSys2);
 	fNode->translate(Ogre::Vector3(0, -4.9f,0));
 
 	// Lights
-	Ogre::Light *light = mSceneMgr->createLight("Light1");
-	light->setType(Ogre::Light::LT_POINT);
-	light->setPosition(Ogre::Vector3(0, 0, 250));
-	light->setDiffuseColour(Ogre::ColourValue::White);
-	light->setSpecularColour(Ogre::ColourValue::Red);
+	Ogre::Light *light1 = mSceneMgr->createLight("SceneLight1");
+	light1->setType(Ogre::Light::LT_POINT);
+	light1->setPosition(Ogre::Vector3(50, 0, 150));
+	light1->setDiffuseColour(Ogre::ColourValue::White);
+	light1->setSpecularColour(Ogre::ColourValue::Red);
+
+
+
+	Ogre::Light *light2 = mSceneMgr->createLight("SceneLight2");
+	light2->setType(Ogre::Light::LT_POINT);
+	light2->setPosition(Ogre::Vector3(-50, 0, 150));
+	light2->setDiffuseColour(Ogre::ColourValue::Black);
+	light2->setSpecularColour(Ogre::ColourValue::Blue);
 	// Lights
 
-
-	
 
 	// Initialize the DebugDrawer singleton
 	new DebugDrawer(mSceneMgr, 0.5f);
@@ -160,10 +170,15 @@ void GalaxyShooter::createFrameListener(void)
 	mCamNode = mCamera->getParentSceneNode();
 	mDirection = Ogre::Vector3::ZERO;
 
-	stringstream scoreString;
-	scoreString << "Score : " << score;
+	stringstream stringHelper;
+	stringHelper << "Score : " << score;
 
-	scoreBoardLabel = mTrayMgr->createLabel(OgreBites::TL_BOTTOMLEFT, "ScoreBoard", Ogre::DisplayString(scoreString.str()), 250.0f);
+	scoreBoardLabel = mTrayMgr->createLabel(OgreBites::TL_BOTTOMLEFT, "ScoreBoard", Ogre::DisplayString(stringHelper.str()), 250.0f);
+
+	stringHelper.str("");
+	stringHelper << "Lives : " << lives;
+
+	livesBoard = mTrayMgr->createLabel(OgreBites::TL_BOTTOMLEFT, "LivesBoard", Ogre::DisplayString(stringHelper.str()), 250.0f);
 }
 
 bool GalaxyShooter::frameStarted( const Ogre::FrameEvent& evt )
@@ -207,10 +222,9 @@ bool GalaxyShooter::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	NEWsceneObjects.clear();
 
 	// Destroy unwanted Objects
-	bool finded=false;
-	for (int i=0; i < deleteList.size();i++)
+	for (int i = 0; i < deleteList.size();i++)
 	{
-		for (int j=0; j <sceneObjects.size();)
+		for (int j = 0; j <sceneObjects.size();)
 		{
 			if (sceneObjects[j] == deleteList[i])
 			{
@@ -231,16 +245,16 @@ bool GalaxyShooter::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if(mShutDown)
 		return false;
 
-	//Need to capture/update each device
 	mKeyboard->capture();
 	mMouse->capture();
 
 	mTrayMgr->frameRenderingQueued(evt);
 
-	//Handle Movements
-
 	UpdateGameObjects(evt);
+
 	CheckCollisions();
+
+	UpdateStats(evt);
 
 	return true;
 }
@@ -313,10 +327,7 @@ bool GalaxyShooter::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonI
 
 void GalaxyShooter::UpdateGameObjects(const Ogre::FrameEvent& evt)
 {
-	stringstream scoreString;
-	scoreString << "Score : " << score;
 
-	scoreBoardLabel->setCaption(scoreString.str());
 	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
 	{
 		(*i)->Update(evt);
@@ -375,18 +386,30 @@ void GalaxyShooter::CheckCollisions()
 			}
 		}
 	}
+}
 
-	/*for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+void GalaxyShooter::UpdateStats( const Ogre::FrameEvent& )
+{
+	stringstream stringHelper;
+	stringHelper << "Score : " << score;
+
+	scoreBoardLabel->setCaption(stringHelper.str());
+
+	stringHelper.str("");
+
+	stringHelper << "Lives : " << lives;
+
+	livesBoard->setCaption(stringHelper.str());
+
+}
+
+void GalaxyShooter::ReduceLife()
+{
+	lives--;
+	if (lives == 0)
 	{
-		for (vector<GameObject*>::iterator j = sceneObjects.begin(); j != sceneObjects.end(); j++)
-		{
-			auto bnd = (*j)->getGlobalBoundaries();
-
-			if ( (*i)->IsCollided(*j) )
-			{
-			}
-		}
-	}*/
+			// Game OVER!
+	}
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

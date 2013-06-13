@@ -9,7 +9,6 @@ SpaceCraft::SpaceCraft(Ogre::SceneManager* SceneMgr,Ogre::Node* node, Ogre::Enti
 
 SpaceCraft::~SpaceCraft(void)
 {
-
 }
 
 void SpaceCraft::Update( const Ogre::FrameEvent& evt)
@@ -90,7 +89,6 @@ void SpaceCraft::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id
 
 void SpaceCraft::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
 {
-
 }
 
 void SpaceCraft::mouseMoved(const OIS::MouseEvent &arg)
@@ -120,9 +118,9 @@ void SpaceCraft::Shoot()
 	counter++;
 	stringstream itemName;
 	itemName << "astroid-" << counter;
-	
+
 	//Get Current Position of SpaceCraft;
-	Ogre::Vector3 pos = objectNode->getPosition();  //localSceneManager->getSceneNode("SpacecraftNode")->getChild("Ship")->getPosition();
+	Ogre::Vector3 pos = objectNode->getPosition();
 
 	Ogre::Entity *projectileEntity = localSceneManager->createEntity(itemName.str(), "ast.mesh");
 	Ogre::SceneNode *projectileNode =	localSceneManager->getSceneNode("ProjectilesNode")->createChildSceneNode(itemName.str());
@@ -130,9 +128,33 @@ void SpaceCraft::Shoot()
 	projectileNode->setPosition(pos + Ogre::Vector3(0,16,11));
 	projectileNode->setScale(Ogre::Vector3(.7f,.7f,.7f));
 
-	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("astroidMatt");
+	Ogre::MaterialPtr material = Ogre::MaterialManager::getSingleton().getByName("projectileMatt");
 	projectileEntity->setMaterial(material);
 
 	Projectile* prjc = new Projectile(localSceneManager,projectileNode ,projectileEntity);
 	GalaxyShooter::NEWsceneObjects.push_back(prjc);
+}
+
+void SpaceCraft::Collided( GameObject* otherObject )
+{
+	static int counter = 0;
+	counter++;
+
+	if (dynamic_cast<Enemy*> (otherObject)!= NULL )
+	{
+		GalaxyShooter::ReduceLife();
+
+		stringstream itemName;
+		itemName << "Ship-explosion-" << counter;
+
+		otherObject->Destroy();
+
+		Ogre::ParticleSystem* explosionParticle = localSceneManager->createParticleSystem(itemName.str(), "Explosion");
+		Ogre::SceneNode *explosionNode =localSceneManager->getSceneNode("EnemiesNode")->createChildSceneNode(itemName.str());
+		explosionNode->attachObject(explosionParticle);
+		explosionNode->setPosition(objectNode->getPosition());
+
+		ParticleController* particleCtler = new ParticleController(explosionParticle,1,localSceneManager,objectNode, NULL);
+		GalaxyShooter::NEWsceneObjects.push_back(particleCtler);
+	}
 }

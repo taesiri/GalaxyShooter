@@ -2,6 +2,7 @@
 #include "GalaxyShooter.h"
 #include "GameObject.h"
 #include "Projectile.h"
+#include "SpaceCraft.h"
 
 class Enemy :
 	public GameObject
@@ -12,12 +13,6 @@ public:
 
 	virtual void Update( const Ogre::FrameEvent& );
 	virtual void Destroy();
-
-	virtual void keyPressed( const OIS::KeyEvent & );
-	virtual void keyReleased( const OIS::KeyEvent & );
-	virtual void mousePressed( const OIS::MouseEvent&, OIS::MouseButtonID );
-	virtual void mouseReleased( const OIS::MouseEvent&, OIS::MouseButtonID );
-	virtual void mouseMoved( const OIS::MouseEvent & );
 
 	virtual void Collided( GameObject* );
 
