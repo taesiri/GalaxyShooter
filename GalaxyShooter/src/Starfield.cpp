@@ -24,7 +24,7 @@ void Starfield::Update( const Ogre::FrameEvent& evt)
 			objectNode->setPosition(Ogre::Vector3(0,1500,-200));
 		}
 		else{
-			objectNode->setPosition(Ogre::Vector3(0,1500,-198));
+			objectNode->setPosition(Ogre::Vector3(0,1500,-250));
 		}
 	}
 }

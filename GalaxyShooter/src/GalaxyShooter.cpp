@@ -6,7 +6,6 @@
 
 #include "DebugDrawer.h"
 
-
 using namespace std;
 
 vector<GameObject*> GalaxyShooter::NEWsceneObjects;
@@ -15,9 +14,11 @@ vector<GameObject*> GalaxyShooter::deleteList;
 int GalaxyShooter::score = 0;
 int GalaxyShooter::lives = 3;
 //-------------------------------------------------------------------------------------
-GalaxyShooter::GalaxyShooter(void)
+GalaxyShooter::GalaxyShooter(void) : isPlaying(true), isLost(false)
 {
 	srand (time(NULL));
+
+
 }
 
 //-------------------------------------------------------------------------------------
@@ -59,7 +60,6 @@ void GalaxyShooter::createScene(void)
 	mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
 	mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8);
 
-
 	// Spacecraft
 	Ogre::Entity *spaceCraftEntity = mSceneMgr->createEntity("Spacecraft", "Spacecraft.mesh");
 	Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("SpacecraftNode");
@@ -99,7 +99,7 @@ void GalaxyShooter::createScene(void)
 	// Background
 	Ogre::Plane plane(Ogre::Vector3::UNIT_Z, 0);
 	Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-		plane, 2000, 2000, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Y);
+		plane, 2024, 2024, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Y);
 
 	/*Ogre::MeshManager::getSingleton().createPlane("",Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, plane,,,,,,*/
 
@@ -142,8 +142,6 @@ void GalaxyShooter::createScene(void)
 	light1->setDiffuseColour(Ogre::ColourValue::White);
 	light1->setSpecularColour(Ogre::ColourValue::Red);
 
-
-
 	Ogre::Light *light2 = mSceneMgr->createLight("SceneLight2");
 	light2->setType(Ogre::Light::LT_POINT);
 	light2->setPosition(Ogre::Vector3(-50, 0, 150));
@@ -151,9 +149,8 @@ void GalaxyShooter::createScene(void)
 	light2->setSpecularColour(Ogre::ColourValue::Blue);
 	// Lights
 
-
 	// Initialize the DebugDrawer singleton
-	new DebugDrawer(mSceneMgr, 0.5f);
+	//new DebugDrawer(mSceneMgr, 0.5f);
 }
 
 void GalaxyShooter::destroyScene( void )
@@ -179,6 +176,16 @@ void GalaxyShooter::createFrameListener(void)
 	stringHelper << "Lives : " << lives;
 
 	livesBoard = mTrayMgr->createLabel(OgreBites::TL_BOTTOMLEFT, "LivesBoard", Ogre::DisplayString(stringHelper.str()), 250.0f);
+	menuLabel = mTrayMgr->createLabel(OgreBites::TL_CENTER, "MainMenuLable", Ogre::DisplayString("-- Main Menu --"), 250.0f);
+
+	replayBtn = mTrayMgr->createButton(OgreBites::TL_CENTER, "ReplayBtn", "Play again",250.0f);
+	exitBtn = mTrayMgr->createButton(OgreBites::TL_CENTER, "Exitbtn", "Exit Game",250.0f);
+
+	menuLabel->hide();
+	replayBtn->hide();
+	exitBtn->hide();
+	
+	mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->hide();
 }
 
 bool GalaxyShooter::frameStarted( const Ogre::FrameEvent& evt )
@@ -204,14 +211,14 @@ bool GalaxyShooter::frameStarted( const Ogre::FrameEvent& evt )
 	//}
 
 	// Right before the frame is rendered, call DebugDrawer::build().
-	DebugDrawer::getSingleton().build();
+	//DebugDrawer::getSingleton().build();
 	return true;
 }
 
 bool GalaxyShooter::frameEnded( const Ogre::FrameEvent& evt )
 {
 	// After the frame is rendered, call DebugDrawer::clear()
-	DebugDrawer::getSingleton().clear();
+	//DebugDrawer::getSingleton().clear();
 	return true;
 }
 
@@ -250,11 +257,11 @@ bool GalaxyShooter::frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 	mTrayMgr->frameRenderingQueued(evt);
 
-	UpdateGameObjects(evt);
-
-	CheckCollisions();
-
-	UpdateStats(evt);
+	if (isPlaying){
+		UpdateGameObjects(evt);
+		CheckCollisions();
+		UpdateStats(evt);
+	}
 
 	return true;
 }
@@ -265,72 +272,100 @@ bool GalaxyShooter::keyPressed( const OIS::KeyEvent &arg )
 	switch (arg.key)
 	{
 	case OIS::KC_ESCAPE:
-		mShutDown = true;
+		if(isPlaying && !isLost)
+		{
+			menuLabel->setCaption("-- Main Menu --");
+			showMainMenu();
+		}
+		else if (!isPlaying && !isLost)
+		{
+			hideMainMenu();
+		}
+		//mShutDown = true;
 		break;
 	default:
 		break;
 	}
 
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->keyPressed(arg);
+	if (isPlaying){
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{
+			(*i)->keyPressed(arg);
+		}
 	}
 
 	return true;
 }
 
-bool GalaxyShooter::keyReleased( const OIS::KeyEvent &arg )
+bool GalaxyShooter::keyReleased( const OIS::KeyEvent &evt )
 {
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->keyReleased(arg);
+	if (isPlaying){
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{
+			(*i)->keyReleased(evt);
+		}
 	}
 
 	return true;
 }
 // OIS::MouseListener
-bool GalaxyShooter::mouseMoved( const OIS::MouseEvent &arg )
+bool GalaxyShooter::mouseMoved( const OIS::MouseEvent &evt )
 {
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->mouseMoved(arg);
+	if (isPlaying){
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{
+			(*i)->mouseMoved(evt);
+		}
+	}
+	if (!isPlaying){
+		if (mTrayMgr->injectMouseMove(evt)) return true;
 	}
 
 	return true;
 }
-bool GalaxyShooter::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+bool GalaxyShooter::mousePressed( const OIS::MouseEvent &evt, OIS::MouseButtonID id )
 {
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->mousePressed(arg,id);
-	}
+	if (isPlaying){
 
-	switch (id){
-	case OIS::MB_Left :
-		RespawnEnemy();
-		break;
-	default:
-		break;
-	}
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{
+			(*i)->mousePressed(evt,id);
+		}
 
+		switch (id){
+		case OIS::MB_Left :
+			RespawnEnemy();
+			break;
+		default:
+			break;
+		}
+	}
+	if (!isPlaying){
+		 if (mTrayMgr->injectMouseDown(evt, id)) return true;
+	}
 	return true;
 }
-bool GalaxyShooter::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+bool GalaxyShooter::mouseReleased( const OIS::MouseEvent &evt, OIS::MouseButtonID id )
 {
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->mouseReleased(arg,id);
+	if (isPlaying){
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{	
+			(*i)->mouseReleased(evt,id);
+		}
 	}
-
+	if (!isPlaying){
+		if (mTrayMgr->injectMouseUp(evt, id)) return true;
+	}
 	return true;
 }
 
 void GalaxyShooter::UpdateGameObjects(const Ogre::FrameEvent& evt)
-{
-
-	for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
-	{
-		(*i)->Update(evt);
+{	
+	if (isPlaying){
+		for (vector<GameObject*>::iterator i = sceneObjects.begin(); i != sceneObjects.end(); i++)
+		{
+			(*i)->Update(evt);
+		}
 	}
 }
 
@@ -394,22 +429,70 @@ void GalaxyShooter::UpdateStats( const Ogre::FrameEvent& )
 	stringHelper << "Score : " << score;
 
 	scoreBoardLabel->setCaption(stringHelper.str());
-
 	stringHelper.str("");
-
 	stringHelper << "Lives : " << lives;
 
 	livesBoard->setCaption(stringHelper.str());
 
+	if(lives == 0)
+	{
+		Lose();
+	}
+	if (score >= 100){
+		Win();
+	}
 }
 
 void GalaxyShooter::ReduceLife()
 {
 	lives--;
-	if (lives == 0)
-	{
-			// Game OVER!
+}
+
+void GalaxyShooter::Lose()
+{
+	// Stop the GAME
+	menuLabel->setCaption("-- Game OVER! --");
+	showMainMenu();
+}
+
+void GalaxyShooter::Win()
+{
+	menuLabel->setCaption("-- You WON! --");
+	showMainMenu();
+}
+
+void GalaxyShooter::buttonHit(OgreBites::Button* b)
+{
+	if (b->getName() == "Exitbtn"){
+		mShutDown = true;
+	} else
+	if ( b->getName() == "ReplayBtn" ){
+		
+		hideMainMenu();
+		
+		lives = 3;
+		score = 0;
 	}
+}
+
+void GalaxyShooter::showMainMenu()
+{
+	isPlaying = false;
+	menuLabel->show();
+	replayBtn->show();
+	exitBtn->show();
+	mTrayMgr->showCursor();
+	mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->show();
+}
+
+void GalaxyShooter::hideMainMenu()
+{
+	isPlaying=true;
+	menuLabel->hide();
+	replayBtn->hide();
+	exitBtn->hide();
+	mTrayMgr->getTrayContainer(OgreBites::TL_CENTER)->hide();
+	mTrayMgr->hideCursor();
 }
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32

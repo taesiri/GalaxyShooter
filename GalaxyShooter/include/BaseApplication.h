@@ -50,10 +50,14 @@ protected:
 	virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 
+	virtual void buttonHit(OgreBites::Button* button);
+
 	// Ogre::WindowEventListener
 	//Adjust mouse clipping area
 	virtual void windowResized(Ogre::RenderWindow* rw);
+
 	//Unattach OIS before window shutdown (very important under Linux)
+
 	virtual void windowClosed(Ogre::RenderWindow* rw);
 
 	Ogre::Root *mRoot;

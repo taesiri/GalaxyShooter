@@ -32,6 +32,15 @@ public:
 	void UpdateStats(const Ogre::FrameEvent&);
 	void CheckCollisions();
 
+	void Lose();
+	void Win();
+
+	void showMainMenu();
+	void hideMainMenu();
+
+	bool isPlaying;
+	bool isLost;
+
 	void RespawnEnemy();
 
 	vector<GameObject*> sceneObjects;
@@ -66,11 +75,20 @@ protected:
 	virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 
+
+	virtual void buttonHit(OgreBites::Button*);
+
 	Ogre::SceneNode *mCamNode;   // The SceneNode the camera is currently attached to
 	Ogre::Vector3 mDirection;     // Value to move in the correct direction
 
 	OgreBites::Label* scoreBoardLabel; // Scoreboard
 	OgreBites::Label* livesBoard; // Player Lives board
+
+
+	OgreBites::Label* menuLabel; // Main Menu Label
+
+	OgreBites::Button* replayBtn;
+	OgreBites::Button* exitBtn;
 
 };
 

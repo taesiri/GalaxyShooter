@@ -22,6 +22,7 @@ BaseApplication::BaseApplication(void)
 	mKeyboard(0),
 	mParticleSystem(0)
 {
+	
 }
 
 //-------------------------------------------------------------------------------------
@@ -414,4 +415,9 @@ void BaseApplication::windowClosed(Ogre::RenderWindow* rw)
 			mInputManager = 0;
 		}
 	}
+}
+
+void BaseApplication::buttonHit( OgreBites::Button* button )
+{
+
 }
